@@ -52,6 +52,7 @@ public class UserServlet extends HttpServlet {
       int id = Integer.parseInt(req.getParameter("id"));
         UserRole users = serviceI.findById(id);
         req.setAttribute("users", users);
+        req.setAttribute("roles", serviceI.findAllRoles());
       req.getRequestDispatcher("user/edit.jsp").forward(req,resp);
 
     }
@@ -138,12 +139,12 @@ public class UserServlet extends HttpServlet {
         String code = req.getParameter("code");
         String startDate = req.getParameter("startDate");
         String role_name = req.getParameter("role_name");
-        List<UserRole> list = serviceI.showBy(code,startDate,role_name);
-        req.setAttribute("list",list);
-        req.getRequestDispatcher("user/list.jsp").forward(req,resp);
+        List<UserRole> userRoleList = serviceI.showBy(code,startDate,role_name);
+        req.setAttribute("userRoleList", userRoleList);
+        req.getRequestDispatcher("user/list.jsp").forward(req, resp);
     }
 
-    private void doEdit(HttpServletRequest req, HttpServletResponse resp) throws SQLException, IOException {
+    private void    doEdit(HttpServletRequest req, HttpServletResponse resp) throws SQLException, IOException {
         String idParam = req.getParameter("id");
         int id = (idParam != null && !idParam.isEmpty()) ? Integer.parseInt(idParam) : 0;
         String name = req.getParameter("name");

@@ -54,6 +54,7 @@ public class UserRoleRepoImpl implements UserRoleRepoI {
                 String birth = resultSet.getString("birth");
                 String startDate = resultSet.getString("start_date");
                 Role role = new Role();
+                role.setIdRole(resultSet. getInt("id_role"));
                 role.setRoleName(resultSet.getString("role_name"));
                 user = new User(id, fullName, code, birth, startDate, null);
                 userRole = new UserRole(user, role);
@@ -144,7 +145,6 @@ public class UserRoleRepoImpl implements UserRoleRepoI {
                 statement = connection.prepareStatement(Constants.UPDATE_USER_ROLE);
                 statement.setInt(1, role.getIdRole());
                 statement.setInt(2, user.getIdUser());
-                statement.setInt(3, role.getIdRole());
                 statement.executeUpdate();
             }
 
@@ -166,17 +166,20 @@ public class UserRoleRepoImpl implements UserRoleRepoI {
             Connection connection = DatabaseConnection.getConnection();
             statement = connection.prepareStatement(Constants.SHOW_BY);
             statement.setString(1, "%" + code + "%");
-            statement.setString(2, startDate);
+            statement.setString(2, "%" + startDate + "%");
             statement.setString(3, "%" + role_name + "%");
             ResultSet resultSet = statement.executeQuery();
             User user;
             while (resultSet.next()) {
-                int id = Integer.parseInt(String.valueOf(resultSet.getInt("id")));
+                int id = resultSet.getInt("id_user");
                 String fullName = resultSet.getString("full_Name");
+                code = resultSet.getString("code");
                 String birth = resultSet.getString("birth");
+                startDate = resultSet.getString("start_date");
                 Role role = new Role();
+                role.setRoleName(resultSet.getString("role_name"));
                 user = new User(id, fullName, code, birth, startDate, null);
-                userRole.add(new UserRole(user,role));
+                userRole.add(new UserRole(user, role));
             }
 
         } catch (ClassNotFoundException | SQLException e) {
@@ -190,5 +193,28 @@ public class UserRoleRepoImpl implements UserRoleRepoI {
         }
         return userRole;
     }
+
+    @Override
+    public List<Role> findAllRoles() {
+        List<Role> res = new ArrayList<>();
+
+        try (
+                Connection connection = DatabaseConnection.getConnection();
+                PreparedStatement statement = connection.prepareStatement(Constants.FIND_ALL_ROLES)
+        ) {
+            ResultSet resultSet = statement.executeQuery();
+
+            while (resultSet.next()){
+               int roleId = resultSet.getInt(1);
+               String roleName = resultSet.getString(2);
+               res.add(new Role(roleId, roleName));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return res;
+    }
+
 
 }

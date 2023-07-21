@@ -16,7 +16,7 @@
             crossorigin="anonymous"></script>
 </head>
 <body>
-<%--<form action="/user?action=edit&id=${users.getUser().getIdUser()}"method="post">--%>
+<%--<form action="/user?action=update&id=${users.getUser().getIdUser()}"method="post">--%>
 <%--    Roles--%>
 <%--    <input type="checkbox"value="1"name="role">admin--%>
 <%--    <input type="checkbox"value="2"name="role">user--%>
@@ -27,7 +27,7 @@
 <%--    Birth--%>
 <%--    <input type="date"name="birth_user"value="${users.getUser().getBirth()}">--%>
 <%--    <input type="submit"value="create">--%>
-<%--    <input type="hidden"name="action"value="edit">--%>
+<%--    <input type="hidden"name="action"value="update">--%>
 <%--</form>--%>
 
 <form action="/user?action=edit&id=${users.getUser().getIdUser()}" method="post">
@@ -50,13 +50,17 @@
         </div>
 
         <div class="form-group col-md-2">
-            <label for="inputRole">Admin</label>
-            <input type="checkbox" class="form-control" id="inputRole" value="1" name="role">
-            <label for="inputRole">User</label>
-            <input type="checkbox" class="form-control" value="2" name="role">
+            <c:forEach items="${roles}" var="r">
+                <label>${r.roleName}</label>
+                <input type="checkbox" class="form-control" value="${r.idRole}" name="role" ${r.idRole == users.role.idRole ? "checked" : ""}>
+            </c:forEach>
         </div>
+
         <button type="submit" class="btn btn-primary">Update</button>
     </div>
 </form>
+
+
+
 </body>
 </html>

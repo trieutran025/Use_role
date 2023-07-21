@@ -104,7 +104,7 @@
         <div class="collapse navbar-collapse" id="navbarTogglerDemo02">
             <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
                 <li class="nav-item">
-                    <a class="nav-link" href="/user?action=add">Add</a>
+                    <a class="nav-link" href="/user?action=add"><h5>Add</h5></a>
                 </li>
             </ul>
             <form class="form-inline my-2 my-lg-0" method="post" action="/user?action=search">
@@ -155,7 +155,7 @@
                         <td>${list.getUser().getStartDate()}</td>
                         <td>${list.getRole().getRoleName()}</td>
                         <td>
-                            <a href="/user?action=edit&id=${list.getUser().getIdUser()}">Update</a>
+                            <a href="/user?action=edit&id=${list.getUser().getIdUser()}">Edit</a>
                         </td>
                         <td><label>
                             <input type="checkbox" name="idRemove" value="${list.getUser().getIdUser()}">
@@ -186,9 +186,6 @@
                             </div>
                         </div>
                     </div>
-                </div>
-                <div id="remove">
-
                 </div>
             </form>
         </div>

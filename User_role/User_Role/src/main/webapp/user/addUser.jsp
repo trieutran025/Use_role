@@ -57,10 +57,10 @@
     <div class="form-row">
 
         <div class="form-group col-md-2">
+            <label for="inputRole1">User</label>
+            <input type="checkbox" class="form-control" id="inputRole1" value="1" name="role">
             <label for="inputRole">Admin</label>
-            <input type="checkbox" class="form-control" id="inputRole" value="1" name="role">
-            <label for="inputRole">User</label>
-            <input type="checkbox" class="form-control" value="2" name="role">
+            <input type="checkbox" class="form-control" id="inputRole" value="2" name="role">
         </div>
         <button type="submit" class="btn btn-primary">Add</button>
     </div>
