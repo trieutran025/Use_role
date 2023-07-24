@@ -1,4 +1,4 @@
-package com.example.user_role.model;
+package com.example.user_role.bean;
 
 public class UserRole {
     private User user;

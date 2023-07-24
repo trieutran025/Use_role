@@ -1,4 +1,4 @@
-package com.example.user_role.model;
+package com.example.user_role.bean;
 
 import java.util.List;
 

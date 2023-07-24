@@ -1,11 +1,11 @@
 package com.example.user_role.controler;
 
-import com.example.user_role.model.Role;
-import com.example.user_role.model.User;
-import com.example.user_role.model.UserRole;
+import com.example.user_role.bean.Role;
+import com.example.user_role.bean.User;
 import com.example.user_role.regex.Regex;
 import com.example.user_role.service.UserRoleServiceI;
 import com.example.user_role.service.UserRoleServiceImpl;
+import com.example.user_role.validate.UserRoleValidate;
 
 import javax.servlet.*;
 import javax.servlet.http.*;
@@ -106,21 +106,36 @@ public class UserServlet extends HttpServlet {
                 break;
         }
     }
-    private void doCreate(HttpServletRequest req, HttpServletResponse resp) throws SQLException, IOException {
-        int id = parseInt(req.getParameter("id"));
-//        String name = req.getParameter("name");
-        String testName = null;
-        Pattern pattern = Pattern.compile(Regex.REGEX_NAME);
-        try {
-            testName = req.getParameter("name");
-            if(!pattern.matcher(testName).matches()){
-                throw new Exception();
-            }
-        }catch (Exception e){
-            e.printStackTrace();
+    private void doCreate(HttpServletRequest req, HttpServletResponse resp) throws SQLException, IOException, ServletException {
+        boolean isValid =true;
+        String testId = req.getParameter("id");
+        String errorId = UserRoleValidate.validateId(testId);
+        int id = 0;
+        if(errorId!=null){
+            isValid = false;
+            req.setAttribute("errorId",errorId);
+        }else {
+            id =Integer.parseInt(testId);
         }
-        String  name = testName;
-        String code = req.getParameter("code");
+        String testName= req.getParameter("name");
+        String errorName = UserRoleValidate.validateName(testName);
+        String name = null;
+        if(errorName!=null){
+            isValid =false;
+            req.setAttribute("errorName",errorName);
+        }else {
+            name =testName;
+        }
+        String testCode = req.getParameter("code");
+        String errorCode = UserRoleValidate.validateCode(testCode);
+        String code = null;
+        if(errorCode!=null){
+            isValid = false;
+            req.setAttribute("errorCode",errorCode);
+        }else {
+            code = testCode;
+        }
+
         String birth = req.getParameter("birth");
         String startDate = LocalDate.now().toString();
         String[] roleList = req.getParameterValues("role");
@@ -131,9 +146,14 @@ public class UserServlet extends HttpServlet {
             role.setIdRole(parseInt(r));
             roles.add(role);
         }
-        User user = new User(id, name, code, birth, startDate, roles);
-        serviceI.add(user);
-        resp.sendRedirect("/user?action=list");
+        if(isValid) {
+            User user = new User(id, name, code, birth, startDate, roles);
+            serviceI.add(user);
+            resp.sendRedirect("/user?action=list");
+        }
+        else {
+            req.getRequestDispatcher("user/addUser.jsp").forward(req,resp);
+        }
     }
 
     private void doSearch(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {

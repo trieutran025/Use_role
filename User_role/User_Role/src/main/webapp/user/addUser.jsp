@@ -1,3 +1,4 @@
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
@@ -13,7 +14,13 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js"
             integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
             crossorigin="anonymous"></script>
+    <style>
+        .error{
+            color: red;
+        }
+    </style>
 </head>
+
 <body>
 
 
@@ -38,16 +45,31 @@
         <div class="form-group col-md-6">
             <label for="inputID">ID</label>
             <input type="number" class="form-control" id="inputID" placeholder="ID" name="id">
+            <c:if test="${errorId!=null}">
+                <div class="error">
+                        ${errorId}
+                </div>
+            </c:if>
         </div>
         <div class="form-group col-md-6">
             <label for="inputName">Full Name</label>
             <input type="text" class="form-control" id="inputName" placeholder="Full Name" name="name">
+            <c:if test="${errorName!=null}">
+                <div class="error">
+                ${errorName}
+                </div>
+            </c:if>
         </div>
     </div>
     <div class="form-row">
         <div class="form-group col-md-6">
             <label for="inputCode">Code</label>
             <input type="text" class="form-control" id="inputCode" placeholder="U-XXXX" name="code">
+            <c:if test="${errorCode!=null}">
+                <div class="error">
+                        ${errorCode}
+                </div>
+            </c:if>
         </div>
         <div class="form-group col-md-6">
             <label for="inputBirth">Birth</label>

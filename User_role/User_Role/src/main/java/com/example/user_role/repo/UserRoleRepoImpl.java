@@ -1,8 +1,8 @@
 package com.example.user_role.repo;
 
-import com.example.user_role.model.Role;
-import com.example.user_role.model.User;
-import com.example.user_role.model.UserRole;
+import com.example.user_role.bean.Role;
+import com.example.user_role.bean.User;
+import com.example.user_role.bean.UserRole;
 import com.example.user_role.util.Constants;
 import com.example.user_role.util.DatabaseConnection;
 
