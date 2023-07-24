@@ -13,7 +13,9 @@ public interface UserRoleServiceI {
     boolean add (User user) throws SQLException;
     boolean remove(int id) throws SQLException;
     boolean update(User user) throws  SQLException;
-    List<UserRole> showBy(String code,String startDate , String role_name);
+    List<User> showBy(String code,String startDate , String role_name);
 
     List<Role> findAllRoles();
+    List<User> findAllUser();
+    User findUserById(int id);
 }

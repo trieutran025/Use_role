@@ -30,36 +30,46 @@
 <%--    <input type="hidden"name="action"value="update">--%>
 <%--</form>--%>
 
-<form action="/user?action=edit&id=${users.getUser().getIdUser()}" method="post">
+<form action="/user" method="post">
     <div class="form-row">
         <div class="form-group col-md-6">
             <label for="inputName">Full Name</label>
-            <input type="text" class="form-control" id="inputName" value="${users.getUser().getFullName()}"
+            <input type="text" class="form-control" id="inputName" value="${user.fullName}"
                    placeholder="Full Name" name="name">
         </div>
         <div class="form-group col-md-6">
             <label for="inputCode">Code</label>
-            <input type="text" class="form-control" id="inputCode" value="${users.getUser().getCode()}"
+            <input type="text" class="form-control" id="inputCode" value="${user.code}"
                    placeholder="U-XXXX" name="code">
         </div>
     </div>
     <div class="form-row">
         <div class="form-group col-md-6">
             <label for="inputBirth">Birth</label>
-            <input type="date"class="form-control" id="inputBirth" value="${users.getUser().getBirth()}" name="birth">
+            <input type="date" class="form-control" id="inputBirth" value="${user.birth}" name="birth">
         </div>
 
         <div class="form-group col-md-2">
             <c:forEach items="${roles}" var="r">
+                <c:set var="flag" value="true"></c:set>
+                <c:forEach items="${user.roles}" var="role">
+                    <c:if test="${r.idRole==role.idRole}">
+                        <input type="checkbox" class="form-control"value="${r.idRole}"name="role"checked>
+                        <c:set var="flag" value="false"></c:set>
+                    </c:if>
+                </c:forEach>
+                <c:if test="${flag}">
+                    <input type="checkbox" class="form-control"value="${r.idRole}"name="role">
+                </c:if>
                 <label>${r.roleName}</label>
-                <input type="checkbox" class="form-control" value="${r.idRole}" name="role" ${r.idRole == users.role.idRole ? "checked" : ""}>
             </c:forEach>
         </div>
-
+        <input type="hidden"name="action"value="edit">
+        <input type="hidden"name="id"value="${user.idUser}">
+        <input type="hidden"name="id"value="${user.startDate}">
         <button type="submit" class="btn btn-primary">Update</button>
     </div>
 </form>
-
 
 
 </body>

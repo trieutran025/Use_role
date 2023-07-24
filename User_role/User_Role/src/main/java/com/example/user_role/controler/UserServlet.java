@@ -40,6 +40,7 @@ public class UserServlet extends HttpServlet {
                 try {
                     viewEdit(req,resp);
                 } catch (SQLException e) {
+                    e.printStackTrace();
                 }
                 break;
             default:
@@ -49,21 +50,21 @@ public class UserServlet extends HttpServlet {
     }
 
     private void viewEdit(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException, SQLException {
-      int id = Integer.parseInt(req.getParameter("id"));
-        UserRole users = serviceI.findById(id);
-        req.setAttribute("users", users);
+        int id = Integer.parseInt(req.getParameter("id"));
+        User user = serviceI.findUserById(id);
         req.setAttribute("roles", serviceI.findAllRoles());
-      req.getRequestDispatcher("user/edit.jsp").forward(req,resp);
-
+        req.setAttribute("user", user);
+        req.getRequestDispatcher("user/edit.jsp").forward(req,resp);
     }
 
     private void viewList(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        List<UserRole> userRoleList = serviceI.findAll();
-        req.setAttribute("userRoleList", userRoleList);
+        List<User> users = serviceI.findAllUser();
+        req.setAttribute("users", users);
         req.getRequestDispatcher("user/list.jsp").forward(req, resp);
     }
 
     private void viewCreate(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        req.setAttribute("roles", serviceI.findAllRoles());
         req.getRequestDispatcher("user/addUser.jsp").forward(req, resp);
     }
 
@@ -127,7 +128,7 @@ public class UserServlet extends HttpServlet {
         List<Role> roles = new ArrayList<>();
         for (String r : roleList) {
             Role role = new Role();
-            role.setIdRole(Integer.parseInt(r));
+            role.setIdRole(parseInt(r));
             roles.add(role);
         }
         User user = new User(id, name, code, birth, startDate, roles);
@@ -136,15 +137,16 @@ public class UserServlet extends HttpServlet {
     }
 
     private void doSearch(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        String code = req.getParameter("code");
-        String startDate = req.getParameter("startDate");
-        String role_name = req.getParameter("role_name");
-        List<UserRole> userRoleList = serviceI.showBy(code,startDate,role_name);
-        req.setAttribute("userRoleList", userRoleList);
+        String code = req.getParameter("inputChange");
+        String startDate = req.getParameter("inputChange");
+        String role_name = req.getParameter("inputChange");
+        List<User> users = serviceI.showBy(code,startDate,role_name);
+        req.setAttribute("users", users);
+        req.setAttribute("roles", serviceI.findAllRoles());
         req.getRequestDispatcher("user/list.jsp").forward(req, resp);
     }
 
-    private void    doEdit(HttpServletRequest req, HttpServletResponse resp) throws SQLException, IOException {
+    private void doEdit(HttpServletRequest req, HttpServletResponse resp) throws SQLException, IOException {
         String idParam = req.getParameter("id");
         int id = (idParam != null && !idParam.isEmpty()) ? Integer.parseInt(idParam) : 0;
         String name = req.getParameter("name");
@@ -156,7 +158,7 @@ public class UserServlet extends HttpServlet {
         List<Role> roles = new ArrayList<>();
         for (String r : roleList) {
             Role role = new Role();
-            role.setIdRole(Integer.parseInt(r));
+            role.setIdRole(parseInt(r) );
             roles.add(role);
         }
         User user = new User(id, name, code, birth, startDate, roles);
@@ -169,6 +171,6 @@ public class UserServlet extends HttpServlet {
         for (String idR : idRemove) {
             serviceI.remove(Integer.parseInt(idR));
         }
-            resp.sendRedirect("/user?action=list");
+        resp.sendRedirect("/user?action=list");
     }
 }

@@ -54,8 +54,10 @@ public class UserRoleRepoImpl implements UserRoleRepoI {
                 String birth = resultSet.getString("birth");
                 String startDate = resultSet.getString("start_date");
                 Role role = new Role();
-                role.setIdRole(resultSet. getInt("id_role"));
+                String[] roles = resultSet.getString("id_role").split(" ");
+                role.setIdRole(Integer.parseInt(roles[0]));
                 role.setRoleName(resultSet.getString("role_name"));
+
                 user = new User(id, fullName, code, birth, startDate, null);
                 userRole = new UserRole(user, role);
             }
@@ -73,6 +75,10 @@ public class UserRoleRepoImpl implements UserRoleRepoI {
         }
         return userRole;
     }
+
+//    private List<Role> findRolesBysUser(int userId) {
+//
+//    }
 
     @Override
     public boolean add(User user) throws SQLException {
@@ -118,9 +124,7 @@ public class UserRoleRepoImpl implements UserRoleRepoI {
             statement = connection.prepareStatement(Constants.DELETE_USER);
             statement.setInt(1, id);
             statement.executeUpdate();
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
-        } catch (SQLException e) {
+        } catch (ClassNotFoundException | SQLException e) {
             throw new RuntimeException(e);
         }
         return false;
@@ -141,26 +145,26 @@ public class UserRoleRepoImpl implements UserRoleRepoI {
             statement.setInt(5, user.getIdUser());
 
             statement.executeUpdate();
+            removeUserRoleByUserId(user.getIdUser());
             for (Role role : user.getRoles()) {
-                statement = connection.prepareStatement(Constants.UPDATE_USER_ROLE);
-                statement.setInt(1, role.getIdRole());
-                statement.setInt(2, user.getIdUser());
+                statement = connection.prepareStatement(Constants.ADD_USER_ROLE);
+                statement.setInt(1, user.getIdUser());
+                statement.setInt(2, role.getIdRole());
                 statement.executeUpdate();
             }
 
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
-        } catch (SQLException e) {
+        } catch (ClassNotFoundException | SQLException e) {
             throw new RuntimeException(e);
         } finally {
+            assert statement != null;
             statement.close();
         }
         return false;
     }
 
     @Override
-    public List<UserRole> showBy(String code, String startDate, String role_name) {
-        List<UserRole> userRole = new ArrayList<>();
+    public List<User> showBy(String code, String startDate, String role_name) {
+        List<User> users = new ArrayList<>();
         PreparedStatement statement = null;
         try {
             Connection connection = DatabaseConnection.getConnection();
@@ -178,8 +182,8 @@ public class UserRoleRepoImpl implements UserRoleRepoI {
                 startDate = resultSet.getString("start_date");
                 Role role = new Role();
                 role.setRoleName(resultSet.getString("role_name"));
-                user = new User(id, fullName, code, birth, startDate, null);
-                userRole.add(new UserRole(user, role));
+                user = new User(id, fullName, code, birth, startDate, findRoleByUserId(id));
+                users.add(user);
             }
 
         } catch (ClassNotFoundException | SQLException e) {
@@ -191,7 +195,7 @@ public class UserRoleRepoImpl implements UserRoleRepoI {
                 throw new RuntimeException(e);
             }
         }
-        return userRole;
+        return users;
     }
 
     @Override
@@ -204,16 +208,99 @@ public class UserRoleRepoImpl implements UserRoleRepoI {
         ) {
             ResultSet resultSet = statement.executeQuery();
 
-            while (resultSet.next()){
-               int roleId = resultSet.getInt(1);
-               String roleName = resultSet.getString(2);
-               res.add(new Role(roleId, roleName));
+            while (resultSet.next()) {
+                int roleId = resultSet.getInt(1);
+                String roleName = resultSet.getString(2);
+                res.add(new Role(roleId, roleName));
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
 
         return res;
+    }
+
+    @Override
+    public List<User> findAllUser() {
+        List<User> users = new ArrayList<>();
+        try (
+                Connection connection = DatabaseConnection.getConnection();
+                PreparedStatement statement = connection.prepareStatement(Constants.FIND_ALL_USER)
+        ) {
+            ResultSet resultSet = statement.executeQuery();
+            User user;
+            while (resultSet.next()) {
+                int idUser = resultSet.getInt("id_user");
+                String fullName = resultSet.getString("full_Name");
+                String code = resultSet.getString("code");
+                String birth = resultSet.getString("birth");
+                String startDate = resultSet.getString("start_date");
+                user = new User(idUser, fullName, code, birth, startDate, findRoleByUserId(idUser));
+                users.add(user);
+            }
+        } catch (SQLException | ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+        return users;
+    }
+
+    @Override
+    public User findUserById(int id) {
+        try (
+                Connection connection = DatabaseConnection.getConnection();
+                PreparedStatement statement = connection.prepareStatement(Constants.FIND_USER_BY_ID)
+        ) {
+            statement.setInt(1, id);
+            ResultSet resultSet = statement.executeQuery();
+            User user;
+            if (resultSet.next()) {
+                int idUser = resultSet.getInt("id_user");
+                String fullName = resultSet.getString("full_Name");
+                String code = resultSet.getString("code");
+                String birth = resultSet.getString("birth");
+                String startDate = resultSet.getString("start_date");
+                user = new User(idUser, fullName, code, birth, startDate, findRoleByUserId(idUser));
+                return user;
+            }
+        } catch (SQLException | ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+        return null;
+    }
+
+    private List<Role> findRoleByUserId(int id_user) {
+        List<Role> roles = new ArrayList<>();
+        try (
+                Connection connection = DatabaseConnection.getConnection();
+                PreparedStatement statement = connection.prepareStatement(Constants.FIND_ROLES_BY_USER_ID)
+        ) {
+            statement.setInt(1, id_user);
+            ResultSet resultSet = statement.executeQuery();
+            Role role;
+            while (resultSet.next()) {
+                int idRole = resultSet.getInt("id_role");
+                String roleName = resultSet.getString("role_name");
+                role = new Role(idRole, roleName);
+                roles.add(role);
+            }
+        } catch (SQLException | ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+        return roles;
+    }
+
+    private boolean removeUserRoleByUserId(int idUser) {
+        PreparedStatement statement = null;
+        try (Connection connection = DatabaseConnection.getConnection();
+        ) {
+            statement = connection.prepareStatement(Constants.DELETE_USER_ROLE);
+            statement.setInt(1, idUser);
+            statement.executeUpdate();
+
+        } catch (ClassNotFoundException | SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return false;
     }
 
 

@@ -38,13 +38,23 @@ public class UserRoleServiceImpl implements UserRoleServiceI {
     }
 
     @Override
-    public List<UserRole> showBy(String code, String startDate, String role_name) {
+    public List<User> showBy(String code, String startDate, String role_name) {
         return repo.showBy(code,startDate,role_name);
     }
 
     @Override
     public List<Role> findAllRoles() {
         return repo.findAllRoles();
+    }
+
+    @Override
+    public List<User> findAllUser() {
+        return repo.findAllUser();
+    }
+
+    @Override
+    public User findUserById(int id) {
+        return repo.findUserById(id);
     }
 
 

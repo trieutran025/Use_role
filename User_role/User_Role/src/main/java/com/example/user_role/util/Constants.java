@@ -13,7 +13,7 @@ public class Constants {
             "\n" + "FROM user_role" +
             "\n" + "JOIN role USING(id_role)" +
             "\n" + "JOIN user USING(id_user)" +
-            "\n" + "WHERE code  like ? and  start_date like ?  and role_name like ?" +
+            "\n" + "WHERE code  like ? or  start_date like ?  or role_name like ?" +
             "\n" + "GROUP BY id_user;";
     public static final String FIND_BY_ID_USER_ROLE = "SELECT user.*, \n" +
             "       GROUP_CONCAT(role_name SEPARATOR ' ') as role_name, \n" +
@@ -25,4 +25,8 @@ public class Constants {
             "GROUP BY id_user;\n";
 
     public static final String FIND_ALL_ROLES = "select * from role";
+    public static final String FIND_ROLES_BY_USER_ID = "select r.* from role r inner join user_role u on r.id_role = u.id_role " +
+            "where u.id_user = ?";
+    public static final String FIND_ALL_USER = "select * from user";
+    public static final String FIND_USER_BY_ID = "select *from user where id_user=?";
 }

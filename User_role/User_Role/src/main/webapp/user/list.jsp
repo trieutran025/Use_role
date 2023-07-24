@@ -108,9 +108,7 @@
                 </li>
             </ul>
             <form class="form-inline my-2 my-lg-0" method="post" action="/user?action=search">
-                <input class="form-control mr-sm-2" type="search" placeholder="Search"name="code">
-                <input class="form-control mr-sm-2" type="search" placeholder="Search"name="startDate">
-                <input class="form-control mr-sm-2" type="search" placeholder="Search"name="role_name">
+                <input class="form-control mr-sm-2" type="search" placeholder="Search"name="inputChange">
                 <input type="hidden" name="action" value="search">
                 <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
             </form>
@@ -145,20 +143,24 @@
         <div>
 
             <form method="post" action="/user?action=delete">
-                <c:forEach items="${userRoleList}" var="list" varStatus="index">
+                <c:forEach items="${users}" var="u" varStatus="index">
                     <tr>
                         <td>${index.count}</td>
-                        <td>${list.getUser().getIdUser()}</td>
-                        <td>${list.getUser().getFullName()}</td>
-                        <td>${list.getUser().getCode()}</td>
-                        <td>${list.getUser().getBirth()}</td>
-                        <td>${list.getUser().getStartDate()}</td>
-                        <td>${list.getRole().getRoleName()}</td>
+                        <td>${u.idUser}</td>
+                        <td>${u.fullName}</td>
+                        <td>${u.code}</td>
+                        <td>${u.birth}</td>
+                        <td>${u.startDate}</td>
                         <td>
-                            <a href="/user?action=edit&id=${list.getUser().getIdUser()}">Edit</a>
+                            <c:forEach items="${u.roles}" var="r">
+                                    ${r.roleName}
+                            </c:forEach>
+                        </td>
+                        <td>
+                            <a href="<c:url value="/user?action=edit&id=${u.idUser}"/>">Edit</a>
                         </td>
                         <td><label>
-                            <input type="checkbox" name="idRemove" value="${list.getUser().getIdUser()}">
+                            <input type="checkbox" name="idRemove" value="${u.idUser}">
                             <input type="hidden" name="action" value="delete">
                         </label>
                     </tr>
